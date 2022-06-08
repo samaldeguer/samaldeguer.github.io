@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CCSAKC Dive Meet Simulator</title>
+		<link rel="icon" href="icon.png">
+		<link rel="stylesheet" href="index.css">
+		<script src="diver.js"></script>
+		<script src="diveInfo.js"></script>
+	</head>
+	<body>
+		<h1>CCSAKC DIVE MEET SIMULATOR</h1>
+		<h2>Created by Sam Aldeguer</h2>
+		<center>
+			<div id="buttons" class="topnav">
+				<button onClick="eightUnder()" id="8under">8 and under</button>
+				<button onClick="tenUnder()" id="10under">10 and under</button>
+				<button onClick="twelveUnder()" id="12under">12 and under</button>
+				<button onClick="fourteenUnder()" id="14under">14 and under</button>
+				<button onClick="sixteenUnder()" id="16under">16 and under</button>
+				<button onClick="eighteenUnder()" id="senior">18 and under</button>
+			</div>
+		</center>
+		<br>
+		<center>
+			<form id="basics" style="display: none" onsubmit="return storeBasics();">
+				Amount of divers: <input type="text" id="diverAmount"><br>
+				Amount of judges: <input type="text" id="judgeAmount"><br>
+				<input type="submit" style= "width: 5%; margin-left: 47.5%; margin-right:  47.5%" value="Next">
+			</form>
+		</center>
+		<script type="text/javascript">
+			let diverAmount = 0;
+			let judgeAmount = 0;
+			let amountADives = 0;
+			let amountBDives = 0;
+			let currentDiverInfo = 1;
+			let currentRound = 1;
+			let roundHeader;
+			let divers;
+			let diveInputs;
+
+			function showDiversRanked(round)
+			{
+				let aDiversPrior = 0;
+				let bDiversPrior = 0;
+				let cDiversPrior = 0;
+				let aDiversCurrent = 0;
+				let bDiversCurrent = 0;
+				let cDiversCurrent = 0;
+				let aDiverSlots;
+				let bDiverSlots;
+				let cDiverSlots;
+				let aDiverSlotsIndex = 0;
+				let bDiverSlotsIndex = 0;
+				let cDiverSlotsIndex = 0;
+				let aRank = 1;
+				let bRank = 1;
+				let cRank = 1;
+				let sorted = Array(diverAmount).fill(0);
+				let tempDiver;
+				for (let i = 0; i < diverAmount; i++)
+				{
+					sorted[i] = divers[i];
+					if (divers[i].division == 'A')
+					{
+						aDiversPrior = aDiversPrior + 1;
+					}
+					else if (divers[i].division == 'B')
+					{
+						bDiversPrior = bDiversPrior + 1;
+					}
+					else if (divers[i].division == 'C')
+					{
+						cDiversPrior = cDiversPrior + 1;
+					}
+				}
+				aDiverSlots = Array(aDiversPrior).fill(0);
+				bDiverSlots = Array(bDiversPrior).fill(0);
+				cDiverSlots = Array(cDiversPrior).fill(0);
+				for (let j = 0; j < diverAmount; j++)
+				{
+					for (let k = j+1; k < diverAmount; k++)
+					{
+						if (sorted[j].totalScore < sorted[k].totalScore)
+						{
+							tempDiver = sorted[j];
+							sorted[j] = sorted[k];
+							sorted[k] = tempDiver;
+						}
+					}
+				}
+				let standingsHeaderA = document.createElement("h2");
+				standingsHeaderA.innerHTML = "A Standings:";
+				document.body.appendChild(standingsHeaderA);
+				for (let i = 0; i < diverAmount; i++)
+				{
+					if (sorted[i].division == 'A')
+					{
+						aDiversCurrent = aDiversCurrent + 1;
+						let aDiverSlot = document.createElement("h4");
+						aDiverSlot.innerHTML = aRank + ". " + sorted[i].firstName + " " + sorted[i].lastName + ": " + sorted[i].totalScore.toFixed(2);
+						aDiverSlots[aDiverSlotsIndex] = aDiverSlot;
+						document.body.appendChild(aDiverSlots[aDiverSlotsIndex]);
+						aDiverSlotsIndex = aDiverSlotsIndex + 1;
+						aRank = aRank + 1;
+					}
+				}
+				if (bDiversPrior > 0)
+				{
+					let standingsHeaderB = document.createElement("h2");
+					standingsHeaderB.innerHTML = "B Standings:"
+					document.body.appendChild(standingsHeaderB);
+					for (let i = 0; i < diverAmount; i++)
+					{
+						if (sorted[i].division == 'B')
+						{
+							bDiversCurrent = bDiversCurrent + 1;
+							let bDiverSlot = document.createElement("h4");
+							bDiverSlot.innerHTML = bRank + ". " + sorted[i].firstName + " " + sorted[i].lastName + ": " + sorted[i].totalScore.toFixed(2);
+							bDiverSlots[bDiverSlotsIndex] = bDiverSlot;
+							document.body.appendChild(bDiverSlots[bDiverSlotsIndex]);
+							bDiverSlotsIndex = bDiverSlotsIndex + 1;
+							bRank = bRank + 1;
+						}
+					}
+				}
+				if (cDiversPrior > 0)
+				{
+					let standingsHeaderC = document.createElement("h2");
+					standingsHeaderC.innerHTML = "C Standings:"
+					document.body.appendChild(standingsHeaderC);
+					for (let i = 0; i < diverAmount; i++)
+					{
+						if (sorted[i].division == 'C')
+						{
+							cDiversCurrent = cDiversCurrent + 1;
+							let cDiverSlot = document.createElement("h4");
+							cDiverSLot.innerHTML = cRank + ". " + sorted[i].firstName + " " + sorted[i].lastName + ": " + sorted[i].totalScore.toFixed(2);
+							cDiverSlots[cDiverSlotsIndex] = cDiverSlot;
+							document.body.appendChild(cDiverSlots[cDiverSlotsIndex]);
+							cDiverSlotsIndex = cDiverSlotsIndex + 1;
+							cRank = cRank + 1;
+						}
+					}
+				}
+				if (round != amountADives)
+				{
+					let submitRanks = document.createElement("button");
+					submitRanks.innerHTML = "Next round";
+					submitRanks.style.width = "8%";
+					submitRanks.style.marginLeft = "46%";
+					submitRanks.style.marginRight = "46%";
+					document.body.appendChild(submitRanks);
+					submitRanks.addEventListener("click", () => {
+						document.body.removeChild(standingsHeaderA);
+						for (let i = 0; i < aDiversPrior; i++)
+						{
+							document.body.removeChild(aDiverSlots[i]);
+						}
+						if (bDiversPrior > 0)
+						{
+							document.body.removeChild(standingsHeaderB);
+							for (let i = 0; i < bDiversPrior; i++)
+							{
+								document.body.removeChild(bDiverSlots[i]);
+							}
+						}
+						if (cDiversPrior > 0)
+						{
+							document.body.removeChild(standingsHeaderC);
+							for (let i = 0; i < cDiversPrior; i++)
+							{
+								document.body.removeChild(cDiverSlots[i]);
+							}
+						}
+						document.body.removeChild(submitRanks);
+						if (round < amountADives)
+						{
+							displayCompDive(0, round+1);
+
+						}
+					})
+				}
+
+			}
+
+			function shuffle()
+			{
+				let random;
+				let tempDiver;
+				for (let i = 0; i < diverAmount; i++)
+				{
+					random = Math.floor(Math.random() * (diverAmount-1));
+					tempDiver = divers[random];
+					divers[random] = divers[i];
+					divers[i] = tempDiver;
+				}
+			}
+
+			function displayCompDive(diver, round)
+			{
+				if (divers[diver].division == 'A' || (divers[diver].division != 'A' && round <= amountBDives))
+				{
+					roundHeader.innerHTML = "Round " + round + "\n";
+					let sumScore = 0;
+					let diveScore = 0;
+					let judgeTexts = Array(judgeAmount).fill(0);
+					let judgeTextBoxes = Array(judgeAmount).fill(0);
+					let diverText = document.createElement("h4");
+					let diveText = document.createElement("h4");
+					diverText.innerHTML = divers[diver].firstName + " " + divers[diver].lastName + " will be performing:\n";
+					diveText.innerHTML = divers[diver].dives[round-1] + "<br>" + diveDescriptions[diveNumbers.indexOf(divers[diver].dives[round-1])] + "<br>DD: " + diveDD[diveNumbers.indexOf(divers[diver].dives[round-1])];
+					document.body.appendChild(diverText);
+					document.body.appendChild(diveText);
+					for (let i = 0; i < judgeAmount; i++)
+					{
+						let judgeText = document.createElement("h4");
+						judgeText.innerHTML = "Judge " + (i+1) + " score: ";
+						judgeTexts[i] = judgeText;
+						document.body.appendChild(judgeTexts[i]);
+						let judgeTextBox = document.createElement("input");
+						judgeTextBoxes[i] = judgeTextBox;
+						judgeTexts[i].appendChild(judgeTextBoxes[i]);
+					}
+					let judgeSubmit = document.createElement("button");
+					judgeSubmit.innerHTML = "Submit";
+					judgeSubmit.style.width = "6%";
+					judgeSubmit.style.marginLeft = "47%";
+					judgeSubmit.style.marginRight = "47%";
+					document.body.appendChild(judgeSubmit);
+					judgeSubmit.addEventListener("click", () => {
+						for (let i = 0; i < judgeAmount; i++)
+						{
+							divers[diver].judgeScores[round-1][i] = judgeTextBoxes[i].value;
+							sumScore = parseInt(sumScore) + parseInt(divers[diver].judgeScores[round-1][i]);
+						}
+						diveScore = sumScore * diveDD[diveNumbers.indexOf(divers[diver].dives[round-1])];
+						divers[diver].indDiveScores[round-1] = diveScore;
+						divers[diver].totalScore = divers[diver].totalScore + diveScore;
+						document.body.removeChild(judgeSubmit);
+						for (let i = 0; i < judgeAmount; i++)
+						{
+							judgeTexts[i].removeChild(judgeTextBoxes[i]);
+							document.body.removeChild(judgeTexts[i]);
+						}
+						document.body.removeChild(diverText);
+						document.body.removeChild(diveText);
+						if (diver+1 < diverAmount)
+						{
+							displayCompDive(diver+1, round);
+						}
+						else
+						{
+							if (round <= amountADives)
+							{
+								showDiversRanked(round);
+							}
+							else if (round > amountADives)
+							{
+								document.body.removeChild(roundHeader);
+							}
+						}
+					})
+				}
+				else
+				{
+						if (diver+1 < diverAmount)
+						{
+							displayCompDive(diver+1, round);
+						}
+						else
+						{
+							if (round+1 <= amountADives)
+							{
+								showDiversRanked(round);
+							}
+							else if (round+1 > amountADives)
+							{
+								document.body.removeChild(roundHeader);
+							}
+						}
+				}
+
+			}
+
+			function showOrder()
+			{
+				let orderedDiversHeaders = Array(diverAmount).fill(0);
+				shuffle();
+				let orderHeader = document.createElement("h2");
+				orderHeader.innerHTML = "Diving order";
+				document.body.appendChild(orderHeader);
+				for (let i = 0; i < diverAmount ; i++)
+				{
+					let orderedDiver = document.createElement("h4");
+					orderedDiver.innerHTML = (i+1) + ". " + divers[i].firstName + " " + divers[i].lastName + "\n";
+					orderedDiversHeaders[i] = orderedDiver;
+					document.body.appendChild(orderedDiversHeaders[i]);
+				}
+				let beginButton = document.createElement("button");
+				beginButton.innerHTML = "Begin";
+				beginButton.style.width = "5%";
+				beginButton.style.marginLeft = "47.5%";
+				beginButton.style.marginRight = "47.5%";
+				document.body.appendChild(beginButton);
+				beginButton.addEventListener("click", () => {
+					document.body.removeChild(orderHeader);
+					for (let i = 0; i < diverAmount; i++)
+					{
+						document.body.removeChild(orderedDiversHeaders[i]);
+					}
+					document.body.removeChild(beginButton);
+					roundHeader = document.createElement("h2");
+					document.body.appendChild(roundHeader);
+					displayCompDive(0,1);
+				})
+			}
+
+			function diverInfoForm(diverNumber)
+			{
+				let tempFirstName = "";
+				let tempLastName = "";
+				let tempDivision = "";
+				let tempDiver;
+				let diveBoxes;
+				let diveBoxesText;
+				let infoHeader = document.createElement("h2");
+				infoHeader.innerHTML = "Diver " + diverNumber + " information";
+				document.body.appendChild(infoHeader);
+				currentDiverInfo = currentDiverInfo + 1;
+				let firstName = document.createElement("h4");
+				firstName.innerHTML = "First name: ";
+				document.body.appendChild(firstName);
+				let firstNameText = document.createElement("input");
+				firstName.appendChild(firstNameText);
+				let lastName = document.createElement("h4");
+				lastName.innerHTML = "Last name: ";
+				document.body.appendChild(lastName);
+				let lastNameText = document.createElement("input");
+				lastName.appendChild(lastNameText);
+				let division = document.createElement("h4");
+				division.innerHTML = "Division (A, B or C): ";
+				document.body.appendChild(division);
+				let divisionText = document.createElement("input");
+				division.appendChild(divisionText);
+				let infoButton = document.createElement("button");
+				infoButton.innerHTML = "Next";
+				infoButton.style.width = "5%";
+				infoButton.style.marginLeft = "47.5%";
+				infoButton.style.marginRight = "47.5%";
+				document.body.appendChild(infoButton);
+				infoButton.addEventListener("click", () => {
+					tempFirstName = firstNameText.value;
+					tempLastName = lastNameText.value;
+					tempDivision = divisionText.value.toUpperCase();
+					if (tempDivision == 'A')
+					{
+						tempDiver = new Diver(tempFirstName, tempLastName, amountADives, judgeAmount, tempDivision);
+						diveBoxes = Array(amountADives).fill(0);
+						diveBoxesText = Array(amountADives).fill(0);
+						let infoText = document.createElement("h4");
+						infoText.innerHTML = "Dives must be a legal dive on this <a href='http://www.usadiver.com/dd_table.htm' target='_blank'>site</a>. Must be entered in the format 101A, with the dive number first and the position character as a capital letter directly after.";
+						document.body.appendChild(infoText);
+						for (let i = 0; i < amountADives; i++)
+						{
+							let diveNumber = document.createElement("h4");
+							diveNumber.innerHTML = "Dive " + (i+1) + ": ";
+							document.body.appendChild(diveNumber);
+							diveBoxesText[i] = diveNumber;
+							let diveNumberText = document.createElement("input");
+							diveBoxesText[i].appendChild(diveNumberText);
+							diveBoxes[i] = diveNumberText;
+						}
+						let submitDives = document.createElement("button");
+						submitDives.innerHTML = "Next";
+						submitDives.style.width = "5%";
+						submitDives.style.marginLeft = "47.5%";
+						submitDives.style.marginRight = "47.5%";
+						document.body.appendChild(submitDives);
+						submitDives.addEventListener("click", () => {
+							for (let i = 0; i < amountADives; i++)
+							{
+								tempDiver.addDive(i, diveBoxes[i].value);
+							}
+							divers[diverNumber-1] = tempDiver;
+							document.body.removeChild(infoHeader);
+							firstName.removeChild(firstNameText);
+							document.body.removeChild(firstName);
+							lastName.removeChild(lastNameText);
+							document.body.removeChild(lastName);
+							division.removeChild(divisionText);
+							document.body.removeChild(division);
+							document.body.removeChild(infoButton);
+							document.body.removeChild(infoText);
+							for (let i = 0; i < amountADives; i++)
+							{
+								diveBoxesText[i].removeChild(diveBoxes[i]);
+								document.body.removeChild(diveBoxesText[i]);
+							}
+							document.body.removeChild(submitDives);
+							if (diverNumber+1 <= diverAmount)
+							{
+								diverInfoForm(diverNumber+1);
+							}
+							else
+							{
+								showOrder();
+							}
+						})
+					}
+					else
+					{
+						tempDiver = new Diver(tempFirstName, tempLastName, amountADives, judgeAmount, tempDivision);
+						diveBoxes = Array(amountBDives).fill(0);
+						diveBoxesText = Array(amountBDives).fill(0);
+						let infoText = document.createElement("h4");
+						infoText.innerHTML = "Dives must be a legal dive on this <a href='http://www.usadiver.com/dd_table.htm' target='_blank'>site</a>. Must be entered in the format 101A, with the dive number first and the position character as a capital letter directly after.";
+						document.body.appendChild(infoText);
+						for (let i = 0; i < amountBDives; i++)
+						{
+							let diveNumber = document.createElement("h4");
+							diveNumber.innerHTML = "Dive " + (i+1) + ": ";
+							document.body.appendChild(diveNumber);
+							diveBoxesText[i] = diveNumber;
+							let diveNumberText = document.createElement("input");
+							diveBoxesText[i].appendChild(diveNumberText);
+							diveBoxes[i] = diveNumberText;
+						}
+						let submitDives = document.createElement("button");
+						submitDives.innerHTML = "Next";
+						submitDives.style.width = "5%";
+						submitDives.style.marginLeft = "47.5%";
+						submitDives.style.marginRight = "47.5%";
+						document.body.appendChild(submitDives);
+						submitDives.addEventListener("click", () => {
+							for (let i = 0; i < amountBDives; i++)
+							{
+								tempDiver.addDive(i, diveBoxes[i].value);
+							}
+							divers[diverNumber-1] = tempDiver;
+							document.body.removeChild(infoHeader);
+							firstName.removeChild(firstNameText);
+							document.body.removeChild(firstName);
+							lastName.removeChild(lastNameText);
+							document.body.removeChild(lastName);
+							division.removeChild(divisionText);
+							document.body.removeChild(division);
+							document.body.removeChild(infoButton);
+							document.body.removeChild(infoText); 
+							for (let i = 0; i < amountBDives; i++)
+							{
+								diveBoxesText[i].removeChild(diveBoxes[i]);
+								document.body.removeChild(diveBoxesText[i]);
+							}
+							document.body.removeChild(submitDives);
+							if (diverNumber+1 <= diverAmount)
+							{
+								diverInfoForm(diverNumber+1);
+							}
+							else
+							{
+								showOrder();
+							}
+						})
+					}
+				})
+			}
+
+			function storeBasics()
+			{
+				diverAmount = document.getElementById('diverAmount').value;
+				judgeAmount = document.getElementById('judgeAmount').value;
+				if (Number.isInteger(+diverAmount) == false || diverAmount <= 0 || Number.isInteger(+judgeAmount) == false || judgeAmount <= 0)
+				{
+					alert("Diver and judge amount must be an integer greater than 0.");
+				}
+				else
+				{
+					document.getElementById('buttons').style.display = 'none';
+					document.getElementById('basics').style.display = 'none';
+					divers = Array(diverAmount).fill(0);
+					diverInfoForm(1);
+				}
+				return false;
+			}
+
+			function eightUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#9BC2E8';
+				document.getElementById('10under').style.backgroundColor = '#3187DD';
+				document.getElementById('12under').style.backgroundColor = '#3187DD';
+				document.getElementById('14under').style.backgroundColor = '#3187DD';
+				document.getElementById('16under').style.backgroundColor = '#3187DD';
+				document.getElementById('senior').style.backgroundColor = '#3187DD';
+				amountADives = 3;
+				amountBDives = 3;
+			}
+
+			function tenUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#3187DD';
+				document.getElementById('10under').style.backgroundColor = '#9BC2E8';
+				document.getElementById('12under').style.backgroundColor = '#3187DD';
+				document.getElementById('14under').style.backgroundColor = '#3187DD';
+				document.getElementById('16under').style.backgroundColor = '#3187DD';
+				document.getElementById('senior').style.backgroundColor = '#3187DD';
+				amountADives = 4;
+				amountBDives = 3;
+			}
+
+			function twelveUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#3187DD';
+				document.getElementById('10under').style.backgroundColor = '#3187DD';
+				document.getElementById('12under').style.backgroundColor = '#9BC2E8';
+				document.getElementById('14under').style.backgroundColor = '#3187DD';
+				document.getElementById('16under').style.backgroundColor = '#3187DD';
+				document.getElementById('senior').style.backgroundColor = '#3187DD';
+				amountADives = 5;
+				amountBDives = 4;
+
+			}
+
+			function fourteenUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#3187DD';
+				document.getElementById('10under').style.backgroundColor = '#3187DD';
+				document.getElementById('12under').style.backgroundColor = '#3187DD';
+				document.getElementById('14under').style.backgroundColor = '#9BC2E8';
+				document.getElementById('16under').style.backgroundColor = '#3187DD';
+				document.getElementById('senior').style.backgroundColor = '#3187DD';
+				amountADives = 6;
+				amountBDives = 4;
+
+			}
+
+			function sixteenUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#3187DD';
+				document.getElementById('10under').style.backgroundColor = '#3187DD';
+				document.getElementById('12under').style.backgroundColor = '#3187DD';
+				document.getElementById('14under').style.backgroundColor = '#3187DD';
+				document.getElementById('16under').style.backgroundColor = '#9BC2E8';
+				document.getElementById('senior').style.backgroundColor = '#3187DD';
+				amountADives = 6;
+				amountBDives = 5;
+
+			}
+
+			function eighteenUnder()
+			{
+				document.getElementById('basics').style.display = 'block';
+				document.getElementById('8under').style.backgroundColor = '#3187DD';
+				document.getElementById('10under').style.backgroundColor = '#3187DD';
+				document.getElementById('12under').style.backgroundColor = '#3187DD';
+				document.getElementById('14under').style.backgroundColor = '#3187DD';
+				document.getElementById('16under').style.backgroundColor = '#3187DD';
+				document.getElementById('senior').style.backgroundColor = '#9BC2E8';
+				amountADives = 6;
+				amountBDives = 5;
+			}
+
+			function elevenDives()
+			{
+				document.getElementById('basics').style.display = 'block';
+				amountADives = 11;
+				amountBDives = 11;
+			}
+		</script>
+	</body>
+</html>

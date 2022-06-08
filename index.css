@@ -1,0 +1,51 @@
+body {
+	background-color:  #DBF6FF;
+}
+
+h1 {
+	font-family: Geneva, Verdana, sans-serif;
+	text-align:  center;
+	font-size:  50px;
+}
+
+h2 {
+	font-family: Geneva, Verdana, sans-serif;
+	text-align:  center;
+  font-size:  20px;
+}
+
+h4 {
+	text-align:  center;
+  font-family: Geneva, Verdana, sans-serif;;
+}
+
+form {
+  font-family: Geneva, Verdana, sans-serif;
+}
+
+.topnav {
+  background-color: #3187DD;
+  overflow: hidden;
+}
+
+.topnav button {
+  float: left;
+  color: white;
+  border: none;
+  background-color: #3187DD;
+  border-color: #3187DD;
+  text-align: center;
+  padding: 10px 10px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav button:hover {
+  background-color: #9BC2E8;
+  color: black;
+}
+
+.topnav button.active {
+  background-color: #04AA6D;
+  color: white;
+}
